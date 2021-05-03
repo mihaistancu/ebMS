@@ -21,7 +21,7 @@ namespace ebMS
             Parser.Default.ParseArguments<Options>(args).WithParsed(o =>
             {
                 uri = new Uri(o.Url);
-                soap = new XmlDocument();
+                soap = new XmlDocument{PreserveWhitespace = true};
                 certificate = new X509Certificate2(o.TlsCertificate);
                 soap.Load(o.Soap);
                 sedPath = o.Sed;
@@ -55,8 +55,8 @@ namespace ebMS
 
         private static readonly Dictionary<string, string> MimeMap = new Dictionary<string, string>
         {
-            {"xml", "application/xml"},
-            {"gz", "application/gzip"}
+            {".xml", "application/xml"},
+            {".gz", "application/gzip"}
         };
 
         public static MimeEntity Serialize()
@@ -75,7 +75,7 @@ namespace ebMS
 
             var mimeAttachment = new MimePart(contentType)
             {
-                ContentId = Guid.NewGuid().ToString(),
+                ContentId = "DefaultSED",
                 Content = new MimeContent(File.OpenRead(sedPath)),
                 ContentDisposition = new ContentDisposition(ContentDisposition.Attachment),
                 ContentTransferEncoding = ContentEncoding.Binary
